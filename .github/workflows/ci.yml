@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Construir imagen Docker
+        run: docker build -t meva-app .
+
+      - name: Ejecutar contenedor
+        run: |
+          docker run -d --name meva-app -p 3000:3000 meva-app
+          sleep 5
+          curl http://localhost:3000
+
+      - name: Parar contenedor
+        if: always()
+        run: docker stop meva-app
